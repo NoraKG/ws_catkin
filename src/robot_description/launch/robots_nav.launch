@@ -1,0 +1,49 @@
+<launch>
+
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+ </include>
+
+  <!-- start the world --> 
+  <node name="spawn_model1" pkg="gazebo_ros" type="spawn_model"
+	args="-sdf -file $(find robot_description)/urdf/wall.sdf -x 0 -y 0 -z 0 -model wall"/> 	 
+
+
+  <!-- include our robots -->
+  <include file="$(find robot_description)/launch/robots.launch"/>
+
+
+  <!--Run the map server-->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_description)/maps/map.yaml" respawn="false" >
+    <param name="frame_id" value="/map" />
+  </node>
+
+
+  <group ns="robot1">
+    <param name="tf_prefix" value="robot1_tf" />
+    <param name="amcl/initial_pose_x" value="0" />
+    <param name="amcl/initial_pose_y" value="1" />
+    <include file="$(find robot_description)/launch/move_base.launch"/>
+  </group>
+
+  <group ns="robot2">
+    <param name="tf_prefix" value="robot2_tf" />
+    <param name="amcl/initial_pose_x" value="0" />
+    <param name="amcl/initial_pose_y" value="-1" />
+    <include file="$(find robot_description)/launch/move_base.launch"/>
+  </group>
+
+  <group ns="robot3">
+    <param name="tf_prefix" value="robot3_tf" />
+    <param name="amcl/initial_pose_x" value="0" />
+    <param name="amcl/initial_pose_y" value="0" />
+    <include file="$(find robot_description)/launch/move_base.launch"/>
+  </group>
+
+
+<!--
+ <node pkg="rviz" type="rviz" name="rviz" args="-d $(find your_pkg)/config/multi.vcg"
+   output="screen" />
+-->
+
+</launch>
